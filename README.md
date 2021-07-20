@@ -1,7 +1,8 @@
-# AWS Solutions Architect Certificate
+<p align="center"><img width="150" alt="portfolio_view" src="logo.png"></p>
 
+<h1 align="center">AWS Solutions Architect Certificate Notes</h1>
 
-## S3 Storage Tiers
+## Simple Storage Service (S3)
 
 - Object-based storage.
 - Virtual-host style and path-sytle URLs (soon to be retired) supported
@@ -15,58 +16,57 @@
   - Quick recovery from network issues
 - To make sure that S3 objects are only accessible from Cloudfront, create an Origin Access Identity (OAI) for Cloudfront and grant access to the objects to that OAI.
 
+- **Storage Tiers**
+  1. **Standard**
+      - General purpose
+      - Low latency, high throughput
+      - 99.99% availability
+  2. **Standard Infrequent Access (IA)**
+      - Infrequent access
+      - Long-term storage, backups, and as a data store for disaster recovery files
+      - 99.9% availability
+  3. **Intelligent-Tiering**
+      - Unknown or changing access pattern
+      - Small monthly monitoring and auto-tiering fee
+      - 99.9% availability
+  4. **One Zone Infrequent Access (IA)**
+      - Only stored in one AZ
+      - Costs 20% less than Standard IA
+      - Lower-cost option for infrequently accessed data but do not require the availability and resilience
+      - 99.5% availability
+  5. **Glacier**
+      - Low-cost storage for long-term archival data
+      - Retrieval times from minutes to hours
+      - Can have one resource-based vault access policy
+      - Can have one Vault Lock policy
+        - Example: Retain archives for 1 year before you can delete them
+      - Retrievals
+        - Expedited - Costly 1-5 min, <250MB
+        - Standard - Default, 3-5 hours
+        - Bulk - Cheapest, 5-12 hours
+  6. **Glacier Deep Archive**
+      - Lowest cost storage class
+      - Data will be retained for 7-10 years
+      - Retrieval time within 12 hours
 
-1. **Standard**
-    - General purpose
-    - Low latency, high throughput
-    - 99.99% availability
-2. **Standard Infrequent Access (IA)**
-    - Infrequent access
-    - Long-term storage, backups, and as a data store for disaster recovery files
-    - 99.9% availability
-3. **Intelligent-Tiering**
-    - Unknown or changing access pattern
-    - Small monthly monitoring and auto-tiering fee
-    - 99.9% availability
-4. **One Zone Infrequent Access (IA)**
-    - Only stored in one AZ
-    - Costs 20% less than Standard IA
-    - Lower-cost option for infrequently accessed data but do not require the availability and resilience
-    - 99.5% availability
-5. **Glacier**
-    - Low-cost storage for long-term archival data
-    - Retrieval times from minutes to hours
-    - Can have one resource-based vault access policy
-    - Can have one Vault Lock policy
-      - Example: Retain archives for 1 year before you can delete them
-    - Retrievals
-      - Expedited - Costly 1-5 min, <250MB
-      - Standard - Default, 3-5 hours
-      - Bulk - Cheapest, 5-12 hours
-6. **Glacier Deep Archive**
-    - Lowest cost storage class
-    - Data will be retained for 7-10 years
-    - Retrieval time within 12 hours
 
-
-### Options
-
-- **S3 Select**
-  - Oranize and mange your date in ways to suppport specific use cases
-  - Allows retrieval of subset of data from an object by using simple SQL expressions (ie. single gzip csv file)
-- **Transfer Acceleration**
-  - Enables fast, easy, and secure transfer of files over long distances between your client and your Amazon S3 bucket
-  - Can speed up content transfers to and from Amazon S3 by as much as 50-500% for long-distance transfer of larger objects
-- **Provisioned Capacity**
-  - Ensures retrieval capacity for expidted retrievals is available when you need it
-  - If your workload requires highly reliable and predictable access to a subset of your data in minutes
-- **S3 Object Lock**
-  - Write once and read many times (WORM)
-  - Help prevent objects form being deleted or overwritten
-- **Server Access Logging**
-  - provides detailed records for the requests that are made to a bucket
-  - Access log information can be useful in security and access audits.
-  - No extra charge for this, except storage of log files
+- **Options**
+  - **S3 Select**
+    - Oranize and mange your date in ways to suppport specific use cases
+    - Allows retrieval of subset of data from an object by using simple SQL expressions (ie. single gzip csv file)
+  - **Transfer Acceleration**
+    - Enables fast, easy, and secure transfer of files over long distances between your client and your Amazon S3 bucket
+    - Can speed up content transfers to and from Amazon S3 by as much as 50-500% for long-distance transfer of larger objects
+  - **Provisioned Capacity**
+    - Ensures retrieval capacity for expidted retrievals is available when you need it
+    - If your workload requires highly reliable and predictable access to a subset of your data in minutes
+  - **S3 Object Lock**
+    - Write once and read many times (WORM)
+    - Help prevent objects form being deleted or overwritten
+  - **Server Access Logging**
+    - provides detailed records for the requests that are made to a bucket
+    - Access log information can be useful in security and access audits.
+    - No extra charge for this, except storage of log files
 
 ### Athena
 - Interactive query service that makes it easy to analyze data in Amazon S3 using standard SQL
@@ -879,7 +879,7 @@
 
 ---
 
-# NOTES
+# Random Notes
 
 - CloudFront
 - Global Accelerators
