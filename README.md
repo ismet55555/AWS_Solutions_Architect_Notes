@@ -4,7 +4,8 @@
 
 ## Simple Storage Service (S3)
 
-- Object-based storage.
+- Object-based storage
+- Not for rapidly changing data
 - Virtual-host style and path-sytle URLs (soon to be retired) supported
   - Virutal-host style example: https://bucket-name.s3.Region.amazonaws.com/key
   - Path-style example: https://s3.Region.amazonaws.com/bucket-name/key
@@ -145,6 +146,8 @@
 ### Aurora
 
 - Relational database managed by AWS
+- ACID (Atomicity, Consistency, Isolation, Durability) compliant
+  - Guarantee data validity despite errors, power failures, and other mishaps
 - **Aurora Serverless**
   - On-demand, auto-scaling configuration of Aurora
   - Automatically starts up, shuts down, scales when needed
@@ -303,6 +306,7 @@
     - Can take snapshots of it
     - Can persists after instance is terminated
     - Automatically backed up within same AZ
+    - Can be used while snapshot is in progress
     - `DeleteOnTermination` Option for EBS Volumes. Set to `false` to keep the volume after the instance is terminated.
 2. **EC2 Instance Store**
     - Temporary block-based storage ("Ephemeral")
@@ -318,8 +322,16 @@
     - POSIX-compliant (Linux)
     - Lifecycle policy of 90 days
     - NFS port 2049
-
-4. **Simple Cloud Storage (S3)**
+4. **FSx**
+    - Windows-based storage, Windows-based apps or windows servers
+    - High-performance computing (HPC), machine learning, electronic design automation (EDA).
+5. **Amazon FSx for Lustre**
+    - Machine learning, high performance computing (HPC), video rendering, and financial simulations
+    - Does **NOT** support Windows-based apps or windows servers
+    - Sub-millisecond latencies
+    - Up to hundreds of gigabytes per second of throughput
+    - Millions of IOPS
+6. **Simple Cloud Storage (S3)**
     - Object-based storage
     - Can backup and store, AMIs, snapshot, etc.
 
@@ -448,7 +460,8 @@
 
 - Auto Scaling Policies
   - **Maintain** - Maintain current instance levels
-  - **Manually** - Set max, min, and desired instance count
+  - **Manually/Target** - Set max, min, and desired instance count
+  - **Step** - choose scaling metrics and threshold values for the CloudWatch alarms that trigger the scaling process 
   - **Schedule** - Based on some schedule, time, date, or cron expression
   - **Dynamic** - Responsive to a metric (ie. demand/load)
   - **Predictive** - Proactive based on pattern (Machine Learning)
@@ -674,6 +687,9 @@
 - Monitoring
 - Authorization and access control
 - Automatically protects the backend systems from DDoS attack
+- All of the APIs created with Amazon API Gateway expose HTTPS endpoints only.
+- Amazon API Gateway does not support unencrypted (HTTP) endpoints.
+- By default, Amazon API Gateway assigns an internal domain to the API that automatically uses the Amazon API Gateway certificate.
 
 ---
 
@@ -843,6 +859,7 @@
 
 ### Glue
 
+- Fully managed extract, transform, and load (ETL) service
 - Serverless data integration service that makes it easy to discover, prepare, and combine data for analytics, machine learning, and application development.
 - Data integration is the process of preparing and combining data for analytics, machine learning, and application development.
 - Provides both visual and code-based interfaces to make data integration easier
@@ -863,6 +880,11 @@
 - **System Manager Agent (SSM Agent)**
   - Can be installed and configured on an EC2 instance, an on-premises server, or a virtual machine (VM)
   - Update, manage, and configure these resources
+- **Run Command**
+  - Lets you remotely and securely manage the configuration of your managed instances
+    - A managed instance is any Amazon EC2 instance or on-premises machine in your hybrid environment that has been configured for Systems Manager. 
+  - Enables you to automate common administrative tasks and perform ad hoc configuration changes at scale.
+  - Run Command from the console to configure instances without having to login to each instance
 
 
 ### Network Address Translation (NAT) Gateway
@@ -899,7 +921,14 @@
 
 - `EC2ThrottledException` - Error when VPC not sufficient ENIs or subnet IPs for Lambda/EC2 to scale
 
-- Neptune - Graph database
+- Neptune 
+  - Graph database
+
+- CloudTrail
+  - By default, event log files are encrypted using Amazon S3 server-side encryption (SSE)
+  - Can store your log files in your bucket for as long as you want.
+  - Can also define Amazon S3 lifecycle rules to archive or delete log files automatically.
+
 
 - Redshift
   - Redshift spectrum analytics - complex queries on data stored in S3
@@ -915,3 +944,8 @@
 - AWS Resource Manager
   - Share AWS resources (Transit gateways, licence configs, Route 53 Resolver rules)
   - Elimiates need to create duplicate resources in multiple accounts
+
+- Transit Gateway
+  - Simplify the connectivity between multiple VPCs and also connect to any VPC attached to AWS Transit Gateway with a single VPN connection.
+  - Enables you to scale the IPsec VPN throughput with equal-cost multi-path (ECMP) routing support over multiple VPN tunnels
+  - A single VPN tunnel still has a maximum throughput of 1.25 Gbps
