@@ -6,8 +6,8 @@
 
 - Object-based storage.
 - Virtual-host style and path-sytle URLs (soon to be retired) supported
-- Virutal-host style example: https://bucket-name.s3.Region.amazonaws.com/key
-- Path-style example: https://s3.Region.amazonaws.com/bucket-name/key
+  - Virutal-host style example: https://bucket-name.s3.Region.amazonaws.com/key
+  - Path-style example: https://s3.Region.amazonaws.com/bucket-name/key
 - *Multi-part upload*
   - For larger files
   - Improved throughput
@@ -770,7 +770,7 @@
   - etc
 - Petabyte-scale analysis at half the cost
 - Separates storage and compute
-  - Store datat in S3
+  - Store data in S3
   - Run compute as you need it when processing the data
 - Can setup EMR cluster in minutes
 - Can run multiple clusters in parallel on the same data set
@@ -785,7 +785,8 @@
 
 ### OpsWorks
 
-- Automate configuration management with Chef and Puppet
+- Automate instance configuration management with Chef and Puppet
+- Uses configuration as code
 
 
 ### Trusted Advisor
@@ -866,8 +867,9 @@
 
 ### Network Address Translation (NAT) Gateway
 
-- Instances in a private subnet can connect to services outside your VPC but external services cannot initiate a connection with those instances.
-- Use this instead of a NAT instance (custom)
+- Instances in a private subnet can connect to services outside your VPC, but external services cannot initiate a connection with those instances.
+- Use this instead of a NAT instance (custom approach)
+  - NAT instances has to be managed by customer
 - Should have more than one in a AZ for availability
 - Supports TCP, UDP, ICMP
 - Not supported for IPv6 traffic (use egress-only internet gateway)
@@ -881,17 +883,10 @@
 
 # Random Notes
 
-- CloudFront
+- CloudFront - Content Delivery Network (CDN) at the edge of the web
 - Global Accelerators
 - Fargate - Serverless container technology for EMR or ECS
-- Config
-  - Assess, audit, and evaluate the configurations of your AWS resources
-  - Continuously monitor and record AWS resources configs and allow you to automate the evaluation of recorded configs against desired configurations
-  - Different than cloudtrail in that *cloudtrail cannot enforce rules to comply with or policy*
 - Active Directory / SAML
-- AWS Resource Manager
-  - Share AWS resources (Transit gateways, licence configs, Route 53 Resolver rules)
-  - Elimiates need to create duplicate resources in multiple accounts
 - Total Cost of Ownership (TCO) - ?
 - How to implement Single-Sign-On SSO?
 - Basics on how to use Gateway API with lambda
@@ -902,14 +897,21 @@
 
 - S3 Bucket gateway endpoint?
 
-- `EC2ThrottledException` - VPC not sufficient ENIs or subnet IPs for Lambda/EC2 to scale
-
-- forex trading application
+- `EC2ThrottledException` - Error when VPC not sufficient ENIs or subnet IPs for Lambda/EC2 to scale
 
 - Neptune - Graph database
+
 - Redshift
   - Redshift spectrum analytics - complex queries on data stored in S3
   - Cross-Region-Snapshots Copy
     - Needs to be enabled separately, not default
     - All new manual and automatic snapshots are copied to the specified region
 
+- Config
+  - Assess, audit, and evaluate the configurations of your AWS resources
+  - Continuously monitor and record AWS resources configs and allow you to automate the evaluation of recorded configs against desired configurations
+  - Different than cloudtrail in that *cloudtrail cannot enforce rules to comply with or policy*
+
+- AWS Resource Manager
+  - Share AWS resources (Transit gateways, licence configs, Route 53 Resolver rules)
+  - Elimiates need to create duplicate resources in multiple accounts
