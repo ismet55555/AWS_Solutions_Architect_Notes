@@ -22,13 +22,13 @@
       - General purpose
       - Low latency, high throughput
       - 99.99% availability
-  2. **Standard Infrequent Access (IA)**
-      - Infrequent access
-      - Long-term storage, backups, and as a data store for disaster recovery files
-      - 99.9% availability
-  3. **Intelligent-Tiering**
+  2. **Intelligent-Tiering**
       - Unknown or changing access pattern
       - Small monthly monitoring and auto-tiering fee
+      - 99.9% availability
+  3. **Standard Infrequent Access (IA)**
+      - Infrequent access
+      - Long-term storage, backups, and as a data store for disaster recovery files
       - 99.9% availability
   4. **One Zone Infrequent Access (IA)**
       - Only stored in one AZ
@@ -39,7 +39,7 @@
       - Low-cost storage for long-term archival data
       - Retrieval times from minutes to hours
       - Can have one resource-based vault access policy
-      - Can have one Vault Lock policy
+      - Can have one **Vault Lock** policy
         - Example: Retain archives for 1 year before you can delete them
       - Retrievals
         - Expedited - Costly 1-5 min, <250MB
@@ -112,7 +112,7 @@
 - **Global Tables**
   - Deploy multi-region database without deploying/maintaining replicas yourself
 - **Encryption**
-  - Only can be enabled at table creation
+  - Can ONLY be enabled at table creation
   - Encrypted with KMS
 
 ---
@@ -149,9 +149,9 @@
 - ACID (Atomicity, Consistency, Isolation, Durability) compliant
   - Guarantee data validity despite errors, power failures, and other mishaps
 - **Aurora Serverless**
+  - Only serverless relational database offered
   - On-demand, auto-scaling configuration of Aurora
   - Automatically starts up, shuts down, scales when needed
-  - The only serverless relational database available
 - **Aurora Global Database**
   - For globally distributed applications
   - Single database to span multiple regions
@@ -325,7 +325,7 @@
 4. **FSx**
     - Windows-based storage, Windows-based apps or windows servers
     - High-performance computing (HPC), machine learning, electronic design automation (EDA).
-5. **Amazon FSx for Lustre**
+5. **FSx for Lustre**
     - Machine learning, high performance computing (HPC), video rendering, and financial simulations
     - Does **NOT** support Windows-based apps or windows servers
     - Sub-millisecond latencies
@@ -365,6 +365,7 @@
 
 1. Solid State Drives (SSD)
     - Small, random IO
+    - Can be used as bootable storage for instances
     1. General Purpose - Most cases
         - **gp2** - 16,000 IOPS, 250 MiBs throughput - 1G - 16T
         - **gp3** - 16,000 IOPS, 1,000 MiBs throughput - 1G - 16T
@@ -375,8 +376,8 @@
         - Full IOPS only with nitro-based storage
 
 2. Hard Disk Drives (HDD)
-    - Cannot be boot volumes
-    - large, sequential IO
+    - Large, sequential IO
+    - Can **NOT** be used as bootable storage for instances
     - **st1** - Throughput Optimized - 500 IOPS, 500 MiBs throughput - 125G - 16T (Data Warehouses)
     - **sc1** - Cold HDD - 250 IOPS, 250 MiBs throughput - 125G - 16T (File Servers)
 3. Previous Generation
@@ -402,7 +403,7 @@
 - Connects via HTTPS to AWS
 - Can connect via *AWS Direct Connect*
 - Useful for backups or regular access to cloud storage
-- Supports caching on premise for lower latency
+- Supports *caching* on premise for lower latency on frequently accessed data
 - Types:
     1. **S3 File Gateway** - Store data, files, images in S3. SMB or NFS access
     2. **FSx File Gateway** - For Windows file servers. SMB.
@@ -412,30 +413,31 @@
 ---
 
 ## Direct Connect
-- Direct Connect is a private connection between your on-premise network and AWS Direct Connect.
+- Direct Connect is a private/dedicated connection between on-premise network and AWS.
+- Communication does not go over the public internet
 - Increased bandwidth, throughput, and more consistent network experience
 
 
 ---
 
-### DataSync
+## DataSync
 
 - Installed agent deployed as a Virtual Machine
-- Can transfer data between on-premise and AWS
+- Can transfer data between on-premise devices and AWS storage services
   - Network File System (NFS)
   - Server Message Block (SMB)
   - Self-managed object storage
   - AWS Snowcone
-- Can transfer between AWS storages:
+- Can transfer between AWS storages
   - S3
   - EFS
-  - FSx for Windows
+  - FSx (for Windows)
 - Connects through Direct Connect OR public internet
 - Comes pre-installed with AWS Snowcone
 
 ---
 
-### Snow Services
+## Snow Services
 
 - Physical devices provided by AWS for data transfer.
 - Potentially because of slow network or poor connectivity on customer side
@@ -514,6 +516,7 @@
 4. **Classic**
     - Handles both application (HTTP/HTTPS) and network traffic (TCP/UDP/SSL)
     - Depreciated
+    - Can not convert a Application or Network load balancer to a Classic load balancer
 
 ---
 
@@ -546,7 +549,7 @@
         - **FIFO** - First in, first out. Ordered.
     - Maximum retention queue period of 1 minute to 14 days
     - Cannot set queue priority level
-    - If queue is not deleted by consumer, message can be processed by another consumer
+    - If queue is not deleted by consumer, message can be processed by another consumer/processor
     - **Visibility timeout**
       - Determines how long a message stays *invisible* to other applications during processing
       - Default: 30 seconds - Maximum: 12 hours
@@ -619,6 +622,7 @@
 
 ## CloudWatch
 
+-  Provides you with data and actionable insights to monitor your applications, respond to system-wide performance changes, optimize resource utilization, and get a unified view of operational health
 - EC2 instances are monitored by default
 - Monitoring interval:
   - Default: 5 minutes
@@ -641,16 +645,16 @@
 
 ## Lambda
 
-- Serverless
+- Serverless -  no need to manage servers (like EC2)
 - A function that runs in response to an event
 - Can be triggered by various service invocations:
   - *Synchronous:* API Gateway, ELB, Step Functions, Kinesis Firehose, Cognito, Alexa, Lex
   - *Asynchronous:* S3, SNS, SES, CF, CW Logs/Events, CodeCommit, Config, IoT, CodePipeline, DynamoDB Streams
-- AWS CodePipeline and AWS OpsWorks can't invoke lambda functions.
+- AWS CodePipeline and AWS OpsWorks can **NOT** invoke lambda functions.
 - Scales out (not up) automatically
 - 1 event = 1 function
 - Can be debugged by X-Ray
-- Lambda can read events from —
+- Lambda can read events from:
   - Kinesis
   - DynamoDB
   - SQS
@@ -687,17 +691,17 @@
 - Monitoring
 - Authorization and access control
 - Automatically protects the backend systems from DDoS attack
-- All of the APIs created with Amazon API Gateway expose HTTPS endpoints only.
-- Amazon API Gateway does not support unencrypted (HTTP) endpoints.
-- By default, Amazon API Gateway assigns an internal domain to the API that automatically uses the Amazon API Gateway certificate.
+- All of the APIs created with Amazon API Gateway expose *HTTPS endpoints only*.
+  - Amazon API Gateway does not support unencrypted (HTTP) endpoints.
+  - By default, Amazon API Gateway assigns an internal domain to the API that automatically uses the Amazon API Gateway certificate.
 
 ---
 
 
-### Key Management Service (KMS)
+## Key Management Service (KMS)
 
-- Create and manage cryptographic keys
-- Validated under **FIPS 140-2**
+- Create and manage cryptographic keys to encrypt data at rest
+- Validated under **FIPS 140-2** - Can show proof of tempering
 - Integrated with AWS CloudTrail to provide you with logs of all key usage to help meet your regulatory and compliance needs
 - Server-side encryption
   - Each object is encrypted with a unique key
@@ -709,10 +713,11 @@
     - Provides you with an audit trail that shows when your CMK was used and by whom
   - **Customer-Provided Keys (SSE-C)**
     - You manage the encryption key
+    - Have to manage/rotate yourself
     - Can add in policy `x-amz-server-side​-encryption​-customer-algorithm`
 
 
-### CloudHSM
+## CloudHSM
 
 - Cloud-based hardware security module (HSM)
   - Physical device that:
@@ -721,30 +726,28 @@
 - Generate and use own encryption keys
 - Seperate cluster in separate VPC
 - Custom keys
-- **FIPS 140-2 level 2**
+- **FIPS 140-2 level 2** ([Wiki](https://en.wikipedia.org/wiki/FIPS_140-2#Level_2))
   - Show evidence of tampering
-  - [Wiki](https://en.wikipedia.org/wiki/FIPS_140-2#Level_2)
-- **FIPS 140-2 level 3**
+- **FIPS 140-2 level 3** ([Wiki](https://en.wikipedia.org/wiki/FIPS_140-2#Level_3))
   - Show evidence of tampering
   - Prevent intruder form gaining access to critical security parameters (CSP)
   - Detect and respond to attempts to access
-  - [Wiki](https://en.wikipedia.org/wiki/FIPS_140-2#Level_3)
 
 
-### AWS Inspector
+## AWS Inspector
 
 - Automated security assessment service
 - Helps improve security and compliance of applications deployed on AWS
 
 
-### X-Ray
+## X-Ray
 
 - Helps debug and analyze your micro-service and serverless app with request tracing
 - Provides an end-to-end view of requests as they travel through your application
 - Can find root causes of issues and performance
 
 
-### Directory Service
+## Directory Service
 
 - Managed Microsoft Active Directory in AWS
 - Enables AWS resources to use managed Active Directory for authentication
@@ -762,7 +765,7 @@
   - Directory gateway with which you can direct directory requests to your on-premises MS AD without caching any info in the cloud
   - Cannot share accounts, not multi-VPC
 
-### AWS Backup
+## AWS Backup
 
 - Manage and automate backup across AWS services
 - Backup plans
@@ -770,14 +773,14 @@
 - Monitor backup activity
 
 
-### Step Function
+## Step Function
 
 - State machine
 - Low-code visual workflow service used to orchestrate AWS services / build serverless applications
 - Has a drag-and-drop user interface
 
 
-### Elastic Map Reduce (EMR)
+## Elastic Map Reduce (EMR)
 
 - Framework for processing parallelizable problems across large data sets using large number of nodes (ie. in cluster or grid)
 - Processing vast amounts of data using open source tools
@@ -792,20 +795,20 @@
 - Can run multiple clusters in parallel on the same data set
 
 
-### Data Cycle Manager (DLM)
+## Data Cycle Manager (DLM)
 
 - Manage lifecycle of your AWS resources
 - Automate operations on specified resources
 - Can do automated EBS volume snapshots
 
 
-### OpsWorks
+## OpsWorks
 
-- Automate instance configuration management with Chef and Puppet
+- Automate instance configuration management with **Chef and Puppet**
 - Uses configuration as code
 
 
-### Trusted Advisor
+## Trusted Advisor
 
 - Recommendations to help follow AWS best practices
   - Cost Optimization
@@ -816,7 +819,7 @@
 - Monitor your AWS resources
 
 
-### ElastiCache
+## ElastiCache
 
 - Fast in-memory data store for use with database, cache, message broker, and queue
 - Ephemeral data sub-millisecond response
@@ -834,7 +837,7 @@
   - Multi-threaded architecture
 
 
-### Systems Manager Parameter Store VS Secret Manager
+## Systems Manager Parameter Store VS Secret Manager
 
 - **Parameter Store** - Manage parameters for your AWS resources
 - **Secret Manager** - Manage secrets for your AWS resources
@@ -849,7 +852,7 @@
   - Secrets Manager allows secrets to be shared across accounts
   
 
-### Security Token Service (STS)
+## Security Token Service (STS)
 
 - Generate temporary security credentials
 - Used to access services that require AWS authentication
@@ -857,15 +860,15 @@
 - Temporarily grant access to AWS services
 
 
-### Glue
+## Glue
 
-- Fully managed extract, transform, and load (ETL) service
+- Fully managed Extract, Transform, and Load (ETL) service
 - Serverless data integration service that makes it easy to discover, prepare, and combine data for analytics, machine learning, and application development.
 - Data integration is the process of preparing and combining data for analytics, machine learning, and application development.
 - Provides both visual and code-based interfaces to make data integration easier
 
 
-### System Manager (Formerly known as Simple Systems Manager (SSM))
+## System Manager (Formerly known as Simple Systems Manager (SSM))
 
 - View and control your infrastructure on AWS
 - Can view operational data from multiple AWS services and automate operational tasks across your AWS resources
@@ -875,7 +878,7 @@
   - On-Premise servers
   - Virtual Machines
   - VMs in other cloud enviroments
-- can associate AWS resources together by applying the same identifying resource tag
+- Can associate AWS resources together by applying the same identifying resource tag
 - Can group resources together so you can mange and monitor them as a group
 - **System Manager Agent (SSM Agent)**
   - Can be installed and configured on an EC2 instance, an on-premises server, or a virtual machine (VM)
@@ -887,11 +890,12 @@
   - Run Command from the console to configure instances without having to login to each instance
 
 
-### Network Address Translation (NAT) Gateway
+## Network Address Translation (NAT) Gateway
 
-- Instances in a private subnet can connect to services outside your VPC, but external services cannot initiate a connection with those instances.
+- Enables that instances in a private subnet can connect to services outside your VPC, but external services cannot initiate a connection with those instances.
 - Use this instead of a NAT instance (custom approach)
   - NAT instances has to be managed by customer
+  - NAT instance has to set NACL restrictions off ????
 - Should have more than one in a AZ for availability
 - Supports TCP, UDP, ICMP
 - Not supported for IPv6 traffic (use egress-only internet gateway)
@@ -903,23 +907,24 @@
 
 ---
 
-# Random Notes
+# Other Notes
 
-- CloudFront - Content Delivery Network (CDN) at the edge of the web
+- CloudFront
+  - Content Delivery Network (CDN) at the edge of the web
+  - Seamlessly integrated with AWS Shield, AWS Web Application Firewall and Amazon Route 53
+
 - Global Accelerators
-- Fargate - Serverless container technology for EMR or ECS
-- Active Directory / SAML
-- Total Cost of Ownership (TCO) - ?
-- How to implement Single-Sign-On SSO?
-- Basics on how to use Gateway API with lambda
--  POSIX-compliant - works on all kinds of UNIX systems
-- Multi-tiered application?
-- VPN is established over a Virtual Private Gateway.
+  - Networking service that improves the performance of your users’ traffic
+  - Optimizes the path to your application
+  - Provided two global static public IPs that act as a fixed entry point to your application, improving availability
+    - Can also bring your own public IPs
+  - Acceleration varies by region
 
-
-- S3 Bucket gateway endpoint?
-
-- `EC2ThrottledException` - Error when VPC not sufficient ENIs or subnet IPs for Lambda/EC2 to scale
+- VPC Flow Logs
+  - Enables you to capture information about the IP traffic going to and from network interfaces in your VPC
+  - Flow log data can be published to Amazon CloudWatch Logs or Amazon S3
+  - Can create a flow log for a VPC, a subnet, or a network interface
+  - Can use the default format for the flow log record, or you can specify a custom format
 
 - Neptune 
   - Graph database
@@ -931,8 +936,11 @@
 
 
 - Redshift
-  - Redshift spectrum analytics - complex queries on data stored in S3
-  - Cross-Region-Snapshots Copy
+  - data warehouse - Reporting and data analysis of data
+  - Can query and combine exabytes of structured and semi-structured data across your data warehouse, operational database, and data lake using standard SQL
+  - Lets you easily save the results of your queries back to your S3 data lake
+  - **Redshift spectrum analytics** - Complex queries on data stored in S3
+  - **Cross-Region-Snapshots Copy**
     - Needs to be enabled separately, not default
     - All new manual and automatic snapshots are copied to the specified region
 
@@ -949,3 +957,13 @@
   - Simplify the connectivity between multiple VPCs and also connect to any VPC attached to AWS Transit Gateway with a single VPN connection.
   - Enables you to scale the IPsec VPN throughput with equal-cost multi-path (ECMP) routing support over multiple VPN tunnels
   - A single VPN tunnel still has a maximum throughput of 1.25 Gbps
+
+
+- Fargate - Serverless container technology for EMR or ECS
+- Active Directory / SAML
+- How to implement Single-Sign-On SSO?
+- Basics on how to use Gateway API with lambda
+-  POSIX-compliant - works on all kinds of UNIX systems
+- VPN is established over a Virtual Private Gateway.
+- S3 Bucket gateway endpoint?
+- `EC2ThrottledException` - Error when VPC not sufficient ENIs or subnet IPs for Lambda/EC2 to scale
