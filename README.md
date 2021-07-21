@@ -16,6 +16,11 @@
   - Can pause and resume uploads
   - Quick recovery from network issues
 - To make sure that S3 objects are only accessible from Cloudfront, create an Origin Access Identity (OAI) for Cloudfront and grant access to the objects to that OAI.
+- Supports the following destinations where it can publish events:
+  - Simple Notification Service (SNS) topic
+  - Simple Queue Service (SQS) queue
+  - Lambda
+
 
 - **Storage Tiers**
   1. **Standard**
@@ -71,6 +76,7 @@
 
 ### Athena
 - Interactive query service that makes it easy to analyze data in Amazon S3 using standard SQL
+- Relies on pooled resources provided by AWS to return query results
 - Serverless
 
 ---
@@ -91,6 +97,7 @@
   - Should not reduce the number of partition keys
   - "Composite" partition keys provides more partitions
   - Cardinality - Number of elements in set
+- Good for storing user session data
 
 - **DynamoDB Accelerator (DAX)**
   - In-memory cache for DynamoDB
@@ -133,6 +140,7 @@
   - Can add **read replicas** to primary and secondary database
   - **Active-Active Failover** - All regions are running and can quickly be used.
   - **Active-Passive Failover** - Secondary is on standby, and needs to be spun up on primary failure
+  - Synchronous replication - highly scalable
 
 - **Read Replicas**
   - Enhanced availability
@@ -141,6 +149,7 @@
   - Up to 5 read replicas per master
   - Read replicas are updated asynchronously
   - Can create read replicas within AZ, cross-AZ, and cross-region
+  - Asynchronous replication - highly scalable
 
 
 ### Aurora
@@ -148,6 +157,10 @@
 - Relational database managed by AWS
 - ACID (Atomicity, Consistency, Isolation, Durability) compliant
   - Guarantee data validity despite errors, power failures, and other mishaps
+  - Typically involves a cluster of DB instances instead of a single instance
+    - Uses **endpoints** to route requests to different DB instance(s)
+    - Different instance groups can perform different functions (ie. reader, writer, user-specific, etc)
+    - 
 - **Aurora Serverless**
   - Only serverless relational database offered
   - On-demand, auto-scaling configuration of Aurora
@@ -264,6 +277,8 @@
    - Each instance is on its own server rack
    - Only 7 running instances per AZ
 
+- If you receive a capacity error when launching an instance in a placement group that already has running instances, stop and start all of the instances in the placement group, and try the launch again. Restarting the instances may migrate them to hardware that has capacity for all the requested instances.
+
 ---
 
 ## EC2 Purchase Options
@@ -322,6 +337,10 @@
     - POSIX-compliant (Linux)
     - Lifecycle policy of 90 days
     - NFS port 2049
+    - Has lifecycle management
+      - Only time frames: 7, 14, 30, 60, 90 days
+      - Standard–Infrequent Access (Standard-IA)
+      - One Zone–Infrequent Access (One Zone-IA) 
 4. **FSx**
     - Windows-based storage, Windows-based apps or windows servers
     - High-performance computing (HPC), machine learning, electronic design automation (EDA).
@@ -366,10 +385,10 @@
 1. Solid State Drives (SSD)
     - Small, random IO
     - Can be used as bootable storage for instances
-    1. General Purpose - Most cases
+    1. General Purpose - *Most cases*
         - **gp2** - 16,000 IOPS, 250 MiBs throughput - 1G - 16T
         - **gp3** - 16,000 IOPS, 1,000 MiBs throughput - 1G - 16T
-    3. Provisioned IOPS SSD - Databases
+    3. Provisioned IOPS SSD - *Databases*
         - **io1** - 64,000 IOPS, 1,000 MiBs throughput, 4G - 16T (99.9% durability)
         - **io2** - 64,000 IOPS, 1,000 MiBs throughput, 4G - 16T (99.999% durability)
         - **io2 Block Express** - 256,000 IOPS, 4,000 MiBs throughput - 4G - 64T (sub-millisecond latency)
@@ -405,7 +424,7 @@
 - Useful for backups or regular access to cloud storage
 - Supports *caching* on premise for lower latency on frequently accessed data
 - Types:
-    1. **S3 File Gateway** - Store data, files, images in S3. SMB or NFS access
+    1. **S3 File Gateway** - Store data, files, images in S3. SMB or NFS access.
     2. **FSx File Gateway** - For Windows file servers. SMB.
     3. **Tape Gateway** - Replace physical tapes on premises with virtual tapes in AWS. S3.
     4. **Volume Gateway** - iSCSI block storage on S3. Can use AWS Backup as EBS snapshots.
@@ -482,6 +501,23 @@
   - With launch template you can have multiple versions of a template
   - May have different features than launch configurations
 
+  - The following metrics are available for instances:
+    - CPU Utilization
+    - Disk Reads
+    - Disk Read Operations
+    - Disk Writes
+    - Disk Write Operations
+    - Network In
+    - Network Out
+    - Status Check Failed (Any)
+    - Status Check Failed (Instance)
+    - Status Check Failed (System)
+
+  - The following metrics are available for ECS Service:
+    - ECSServiceAverageCPUUtilization — Average CPU utilization of the service.
+    - ECSServiceAverageMemoryUtilization — Average memory utilization of the service.
+    - ALBRequestCountPerTarget — Number of requests completed per target in an Application Load Balancer target group.
+
 - Auto Scaling Group EC2 Instance Termination Policy
   1. Align to spot policy
   2. Instance with AZ with most number of instances
@@ -518,6 +554,10 @@
     - Depreciated
     - Can not convert a Application or Network load balancer to a Classic load balancer
 
+- **Cross-Zone Load Balancing**
+  -  distribute incoming requests evenly across the Availability Zones enabled for your load balancer
+  -  Otherwise, each load balancer node distributes requests only to instances in its Availability Zone
+
 ---
 
 ## Kinesis Service Types
@@ -528,9 +568,11 @@
     - Gigabytes of data per shard
     - Custom applications or streaming data for specialized needs
     - You are responsible to process the data pulled from the shards
+    - `UpdateShardCount` - Update the number of shards in a stream
 2. **Kinesis Data Firehose**
     - Handles data loading directly into AWS resources for processing (S3, Elesticsearch, Redshift, etc)
     - Automatic scaling
+    - Only supports Amazon S3, Amazon Redshift, Amazon Elasticsearch
 3. **Kinesis Data Analytics**
     - Analyze streaming data for insight in real time
     - Actionable insights from streaming data
@@ -610,13 +652,19 @@
       - *Active-Active Failover* - All resources to be available majoirty of time
       - *Active-Passive Failover* - Secondary resources on standby
 
-- Types of Records on Route53
-  1. **A** - Alias. can use for root domain
-  2. **CNAME** - Canonical name, based on subdomains
-  3. **MX** - Mail server (email)
-  4. **NS** - Name server
-  5. **TXT** - Text record
-  6. **AAAA** - IPv6 address
+- Types of Records on Route53 supported
+  - A (address record) - can be root domain
+  - AAAA (IPv6 address record)
+  - CNAME (canonical name record) - based on subdomains
+  - CAA (certification authority authorization)
+  - MX (mail exchange record)
+  - NAPTR (name authority pointer record)
+  - NS (name server record)
+  - PTR (pointer record)
+  - SOA (start of authority record)
+  - SPF (sender policy framework)
+  - SRV (service locator)
+  - TXT (text record)
 
 ---
 
@@ -824,14 +872,17 @@
 - Fast in-memory data store for use with database, cache, message broker, and queue
 - Ephemeral data sub-millisecond response
 - Uses open-source systems
+- Can be good to store and share user session data
 
 - **Redis**
   - In-memory data store
   - Advanced Data structures
   - Pub/Sub Architecture
   - Snapshots and replication
-  - `AUTH`, `--auth-token` -  command can improve data security by requiring user to enter password
-  - `--transit-encryption-enabled`
+  - Increasing redis security
+    - `AUTH` - -  command can improve data security by requiring user to enter password
+    - `--auth-token` - Parameter to enter password/token
+    - `--transit-encryption-enabled` - Optional, to encrypt data in transit
 - **MemcacheD**
   - Object caching
   - Multi-threaded architecture
@@ -898,6 +949,7 @@
   - NAT instance has to set NACL restrictions off ????
 - Should have more than one in a AZ for availability
 - Supports TCP, UDP, ICMP
+- Only applicable for IPv4 and not IPv6
 - Not supported for IPv6 traffic (use egress-only internet gateway)
 - You can associate exactly one Elastic IP address with a public NAT gateway
 - You cannot associate a security group with a NAT gateway
@@ -926,13 +978,28 @@
   - Can create a flow log for a VPC, a subnet, or a network interface
   - Can use the default format for the flow log record, or you can specify a custom format
 
+- VPC Endpoints
+  - Privately connect your VPC to supported AWS and VPC endpoint services powered by AWS PrivateLink without needing an Internet gateway, NAT computer, VPN connection, or AWS Direct Connect connection
+  - Instances do not require a public IP address
+  - Traffic stays within AWS network
+
 - Neptune 
   - Graph database
 
 - CloudTrail
+  - Record of an activity in an AWS account
+    - Action taken by a user, role, or service
+  - Both API and non-API account activity made through the AWS Management Console, AWS SDKs, command-line tools, and other AWS services
+  - Events to track:
+    - Management - On by default
+    - Data - Not default, but can be enabled
+  - AWS CLI:
+    - `--include-global-service-events` - Enable to track all AWS services
+    - `--is-multi-region-trail` - Enable to track events in all regions
   - By default, event log files are encrypted using Amazon S3 server-side encryption (SSE)
   - Can store your log files in your bucket for as long as you want.
   - Can also define Amazon S3 lifecycle rules to archive or delete log files automatically.
+
 
 
 - Redshift
@@ -958,7 +1025,27 @@
   - Enables you to scale the IPsec VPN throughput with equal-cost multi-path (ECMP) routing support over multiple VPN tunnels
   - A single VPN tunnel still has a maximum throughput of 1.25 Gbps
 
+- CodeDeploy
+  - deployment service that automates software deployments to a variety of compute services such as Amazon EC2, AWS Fargate, AWS Lambda, and your on-premises servers
+  - rapidly release new features
+  - update Lambda function versions
+  - avoid downtime during application deployment
+  - handle the complexity of updating your applications
 
+- Macie
+  - Machine Learning (ML) powered security service
+  - Recognize sensitive data such as personally identifiable information (PII) or intellectual property, assigns a business value
+
+- Elastic IP (EIP)
+  - Atatic IPv4 address designed for dynamic cloud computing.
+  - Yours until you release it
+  - Doesn’t incur charges as long as the following conditions are true:
+     - The Elastic IP address is associated with an Amazon EC2 instance.
+     - The instance associated with the Elastic IP address is running.
+     - The instance has only one Elastic IP address attached to it.
+
+- **Egress-only Internet gateway**
+  - Use with IPv6 traffic only
 - Fargate - Serverless container technology for EMR or ECS
 - Active Directory / SAML
 - How to implement Single-Sign-On SSO?
@@ -967,3 +1054,5 @@
 - VPN is established over a Virtual Private Gateway.
 - S3 Bucket gateway endpoint?
 - `EC2ThrottledException` - Error when VPC not sufficient ENIs or subnet IPs for Lambda/EC2 to scale
+- Remote Desktop Protocol (RDP) - Port 3389
+- Secure Shell (SSH) - Port 22
